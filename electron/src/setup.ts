@@ -6,6 +6,7 @@ import {
 } from '@capacitor-community/electron';
 import chokidar from 'chokidar';
 import type { MenuItemConstructorOptions } from 'electron';
+import { ipcMain } from 'electron';
 import { app, BrowserWindow, Menu, MenuItem, nativeImage, Tray, session } from 'electron';
 import electronIsDev from 'electron-is-dev';
 import electronServe from 'electron-serve';
@@ -170,7 +171,7 @@ export class ElectronCapacitorApp {
       this.SplashScreen = new CapacitorSplashScreen({
         imageFilePath: join(
           app.getAppPath(),
-          'assets',
+          'assets', 
           this.CapacitorFileConfig.electron?.splashScreenImageName ?? 'splash.png'
         ),
         windowWidth: 400,
@@ -197,7 +198,7 @@ export class ElectronCapacitorApp {
 
     // Link electron plugins into the system.
     setupCapacitorElectronPlugins();
-
+    this.MainWindow.show();
     // When the web app is loaded we hide the splashscreen if needed and show the mainwindow.
     this.MainWindow.webContents.on('dom-ready', () => {
       if (this.CapacitorFileConfig.electron?.splashScreenEnabled) {
@@ -213,6 +214,23 @@ export class ElectronCapacitorApp {
         CapElectronEventEmitter.emit('CAPELECTRON_DeeplinkListenerInitialized', '');
       }, 400);
     });
+
+    ipcMain.on('openInspectDeveloper', (event, data) => {
+      this.MainWindow.webContents.openDevTools();
+      event.returnValue = true;
+    });
+  
+  
+    ipcMain.on('zoomChanged', (event, zoom) => {
+      var currentZoom = this.MainWindow.webContents.getZoomFactor();
+      if (zoom === "in") {
+        this.MainWindow.webContents.zoomFactor = currentZoom + 0.1;
+      }
+      if (zoom === "out") {
+        this.MainWindow.webContents.zoomFactor = currentZoom - 0.1;
+      }
+      event.returnValue = true;
+    });
   }
 }
 
@@ -224,8 +242,8 @@ export function setupContentSecurityPolicy(customScheme: string): void {
         ...details.responseHeaders,
         'Content-Security-Policy': [
           electronIsDev
-            ? `default-src ${customScheme}://* 'unsafe-inline' devtools://* 'unsafe-eval' data:`
-            : `default-src ${customScheme}://* 'unsafe-inline' data:`,
+            ? `default-src ${customScheme}://* 'unsafe-inline' devtools://* 'unsafe-eval' data:; font-src 'self' data: https://fonts.gstatic.com;`
+            : `default-src ${customScheme}://* 'unsafe-inline' data:; font-src 'self' data: https://fonts.gstatic.com;`,
         ],
       },
     });

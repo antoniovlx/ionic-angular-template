@@ -1,0 +1,63 @@
+- Refused to load the font '<URL>' because it violates the following Content Security Policy directive: "default-src capacitor-electron://* 'unsafe-inline' devtools://* 'unsafe-eval' data:". Note that 'font-src' was not explicitly set, so 'default-src' is used as a fallback.
+
+- update in setup.ts:
+
+// Set a CSP up for our application based on the custom scheme
+export function setupContentSecurityPolicy(customScheme: string): void {
+  session.defaultSession.webRequest.onHeadersReceived((details, callback) => {
+    callback({
+      responseHeaders: {
+        ...details.responseHeaders,
+        'Content-Security-Policy': [
+          electronIsDev
+            ? `default-src ${customScheme}://* 'unsafe-inline' devtools://* 'unsafe-eval' data:; font-src 'self' data: https://fonts.gstatic.com;`
+            : `default-src ${customScheme}://* 'unsafe-inline' data:; font-src 'self' data: https://fonts.gstatic.com;`,
+        ],
+      },
+    });
+  });
+}
+
+
+- Create tsconfig.serve.json in electron: debugging app
+- check if icon and splash are correct
+- import { ipcMain } from 'electron';
+- add zoom behaviour in setup.ts, inside init()
+
+   ipcMain.on('openInspectDeveloper', (event, data) => {
+      this.MainWindow.webContents.openDevTools();
+      event.returnValue = true;
+    });
+  
+  
+    ipcMain.on('zoomChanged', (event, zoom) => {
+      var currentZoom = this.MainWindow.webContents.getZoomFactor();
+      if (zoom === "in") {
+        this.MainWindow.webContents.zoomFactor = currentZoom + 0.1;
+      }
+      if (zoom === "out") {
+        this.MainWindow.webContents.zoomFactor = currentZoom - 0.1;
+      }
+      event.returnValue = true;
+    });
+  
+- update electron/preload.ts
+  
+require('./rt/electron-rt');
+//////////////////////////////
+// User Defined Preload scripts below
+console.log('User Preload!');
+
+const { contextBridge, ipcRenderer } = require('electron');
+
+///////Do Not Edit////////
+//require("./node_modules/@capacitor-community/electron/dist/electron-bridge.js");
+/////////////////////////
+
+contextBridge.exposeInMainWorld('electron', {
+  ipc: { ...ipcRenderer }
+})
+
+
+
+

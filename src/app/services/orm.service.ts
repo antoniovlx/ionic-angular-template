@@ -94,16 +94,16 @@ export class OrmService {
   }
 
   private async createConnection(): Promise<Connection> {
-    // when using Capacitor, you might want to close existing connections,
+    // when using Capacitor, you might want to close existing connections, 
     // otherwise new connections will fail when using dev-live-reload
     // see https://github.com/capacitor-community/sqlite/issues/106
     CapacitorSQLite.checkConnectionsConsistency({
-      dbNames: [databaseName], // i.e. "i expect no connections to be open"
+      dbNames: [], // i.e. "i expect no connections to be open"
     }).catch((e) => {
       // the plugin throws an error when closing connections. we can ignore
       // that since it is expected behaviour
       console.log(e);
-      return null;
+      return {};
     });
 
     // create a SQLite Connection Wrapper
@@ -173,7 +173,7 @@ export class OrmService {
   // Patch method, called from Proxy object
   private myCreateConnection(database: string, encrypted: boolean, mode: string, version: number): Promise<SQLiteDBConnection> {
     // console.log('myCreateConnection');
-    return _sqliteConnection.createConnection(database, encrypted, mode, version).then(conn => {
+    return _sqliteConnection.createConnection(database, encrypted, mode, version, false).then(conn => {
       _sqliteDBConnection = conn;
       const patchedConn = new Proxy(conn, {
         get: (target, prop) => {
