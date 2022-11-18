@@ -1,4 +1,3 @@
-import { Location } from '@angular/common';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { AlertController, LoadingController, ToastController } from '@ionic/angular';
@@ -40,6 +39,26 @@ export class UiService {
     }, 500);
   }
 
+  numberOnlyValidation(event: any) {
+    const pattern = /[0-9.,]/;
+    let inputChar = String.fromCharCode(event.charCode);
+
+    if (!pattern.test(inputChar)) {
+      event.preventDefault();
+    }
+  }
+
+  private checkEntradas(entradas) {
+    for (const key in entradas) {
+      if (entradas[key] === undefined)
+        return false;
+
+      if (typeof entradas[key] === 'number' && isNaN(entradas[key]))
+        return false;
+    }
+    return true;
+  }
+
   public loaderDismissed(loader) {
     return loader.onDidDismiss();
   }
@@ -52,7 +71,6 @@ export class UiService {
   getSelectTab(){
     return this.selectTab$.asObservable();
   }
-
 
   presentToast(message: string) {
     this.translate.get(message).subscribe(async (res: string) => {
@@ -164,5 +182,11 @@ export class UiService {
     }
     mensaje += "</ul>"
     return mensaje;
+  }
+
+  onTopScrolled(content){
+    this.getTopScrolled$().subscribe(() => {
+      content.scrollToTop();
+    });
   }
 }

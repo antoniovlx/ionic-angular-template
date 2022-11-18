@@ -5,8 +5,8 @@ import {
   setupCapacitorElectronPlugins,
 } from '@capacitor-community/electron';
 import chokidar from 'chokidar';
-import { ipcMain, MenuItemConstructorOptions } from 'electron';
-import { app, BrowserWindow, Menu, MenuItem, nativeImage, Tray, session, } from 'electron';
+import type { MenuItemConstructorOptions } from 'electron';
+import { app, BrowserWindow, Menu, MenuItem, nativeImage, Tray, session } from 'electron';
 import electronIsDev from 'electron-is-dev';
 import electronServe from 'electron-serve';
 import windowStateKeeper from 'electron-window-state';
@@ -52,9 +52,9 @@ export class ElectronCapacitorApp {
     new MenuItem({ label: 'Quit App', role: 'quit' }),
   ];
   private AppMenuBarMenuTemplate: (MenuItem | MenuItemConstructorOptions)[] = [
-    { role: process.platform === 'darwin' ? 'appMenu' : 'fileMenu' }
+    { role: process.platform === 'darwin' ? 'appMenu' : 'fileMenu' },
+    { role: 'viewMenu' },
   ];
-
   private mainWindowState;
   private loadWebApp;
   private customScheme: string;
@@ -83,7 +83,6 @@ export class ElectronCapacitorApp {
     });
   }
 
-
   // Helper function to load in the app.
   private async loadMainWindow(thisRef: any) {
     await thisRef.loadWebApp(thisRef.MainWindow);
@@ -100,7 +99,7 @@ export class ElectronCapacitorApp {
 
   async init(): Promise<void> {
     const icon = nativeImage.createFromPath(
-      join(app.getAppPath(), 'assets', process.platform === 'win32' ? 'icon.ico' : 'appIcon.png')
+      join(app.getAppPath(), 'assets', process.platform === 'win32' ? 'appIcon.ico' : 'appIcon.png')
     );
     this.mainWindowState = windowStateKeeper({
       defaultWidth: 1000,
@@ -114,9 +113,7 @@ export class ElectronCapacitorApp {
       x: this.mainWindowState.x,
       y: this.mainWindowState.y,
       width: this.mainWindowState.width,
-      height: this.mainWindowState.height, 
-      minHeight: 200,
-      minWidth: 200,
+      height: this.mainWindowState.height,
       webPreferences: {
         nodeIntegration: true,
         contextIsolation: true,
@@ -137,7 +134,6 @@ export class ElectronCapacitorApp {
         this.SplashScreen.getSplashWindow().close();
       }
     });
-
 
     // When the tray icon is enabled, setup the options.
     if (this.CapacitorFileConfig.electron?.trayIconAndMenuEnabled) {
@@ -166,35 +162,24 @@ export class ElectronCapacitorApp {
       this.TrayIcon.setContextMenu(Menu.buildFromTemplate(this.TrayMenuTemplate));
     }
 
-    //this.AppMenuBarMenuTemplate = [];
+    // Setup the main manu bar at the top of our window.
     Menu.setApplicationMenu(Menu.buildFromTemplate(this.AppMenuBarMenuTemplate));
 
     // If the splashscreen is enabled, show it first while the main window loads then dwitch it out for the main window, or just load the main window from the start.
-    //if (this.CapacitorFileConfig.electron?.splashScreenEnabled) {
-    this.SplashScreen = new CapacitorSplashScreen({
-      imageFilePath: join(
-        app.getAppPath(),
-        'assets',
-        this.CapacitorFileConfig.electron?.splashScreenImageName ?? 'splash.jpg'
-      ),
-      windowWidth: 600,
-      windowHeight: 600,
-    });
-    this.SplashScreen.init(this.loadMainWindow, this);
-    //} else {
-    //this.loadMainWindow(this);
-    //}
-
-    setTimeout(() => {
-      this.SplashScreen.getSplashWindow().hide()
-    }, 4000
-    )
-
-    /*this.MainWindow.webContents
-      .executeJavaScript('localStorage.getItem("lang");', true)
-      .then(result => {
-        console.log(result);
-      });*/
+    if (this.CapacitorFileConfig.electron?.splashScreenEnabled) {
+      this.SplashScreen = new CapacitorSplashScreen({
+        imageFilePath: join(
+          app.getAppPath(),
+          'assets',
+          this.CapacitorFileConfig.electron?.splashScreenImageName ?? 'splash.png'
+        ),
+        windowWidth: 400,
+        windowHeight: 400,
+      });
+      this.SplashScreen.init(this.loadMainWindow, this);
+    } else {
+      this.loadMainWindow(this);
+    }
 
     // Security
     this.MainWindow.webContents.setWindowOpenHandler((details) => {
@@ -215,9 +200,9 @@ export class ElectronCapacitorApp {
 
     // When the web app is loaded we hide the splashscreen if needed and show the mainwindow.
     this.MainWindow.webContents.on('dom-ready', () => {
-      //if (this.CapacitorFileConfig.electron?.splashScreenEnabled) {
-      //this.SplashScreen.getSplashWindow().hide();
-      //}
+      if (this.CapacitorFileConfig.electron?.splashScreenEnabled) {
+        this.SplashScreen.getSplashWindow().hide();
+      }
       if (!this.CapacitorFileConfig.electron?.hideMainWindowOnLaunch) {
         this.MainWindow.show();
       }
@@ -225,37 +210,8 @@ export class ElectronCapacitorApp {
         if (electronIsDev) {
           this.MainWindow.webContents.openDevTools();
         }
-
         CapElectronEventEmitter.emit('CAPELECTRON_DeeplinkListenerInitialized', '');
       }, 400);
-    });
-
-    ipcMain.on('openInspectDeveloper', (event, data) => {
-      this.MainWindow.webContents.openDevTools();
-      event.returnValue = true;
-    });
-
-
-    ipcMain.on('zoomChanged', (event, zoom) => {
-      var currentZoom = this.MainWindow.webContents.getZoomFactor();
-      if (zoom === "in") {
-        this.MainWindow.webContents.zoomFactor = currentZoom + 0.1;
-      }
-      if (zoom === "out") {
-        this.MainWindow.webContents.zoomFactor = currentZoom - 0.1;
-      }
-      event.returnValue = true;
-    });
-
-    ipcMain.on('zoomChanged', (event, zoom) => {
-      var currentZoom = this.MainWindow.webContents.getZoomFactor();
-      if (zoom === "in") {
-        this.MainWindow.webContents.zoomFactor = currentZoom + 0.1;
-      }
-      if (zoom === "out") {
-        this.MainWindow.webContents.zoomFactor = currentZoom - 0.1;
-      }
-      event.returnValue = true;
     });
   }
 }
@@ -268,8 +224,8 @@ export function setupContentSecurityPolicy(customScheme: string): void {
         ...details.responseHeaders,
         'Content-Security-Policy': [
           electronIsDev
-            ? `default-src ${customScheme}://* 'unsafe-inline' devtools://* 'unsafe-eval' data:; font-src 'self' data: https://fonts.gstatic.com;`
-            : `default-src ${customScheme}://* 'unsafe-inline' data:; font-src 'self' data: https://fonts.gstatic.com;`,
+            ? `default-src ${customScheme}://* 'unsafe-inline' devtools://* 'unsafe-eval' data:`
+            : `default-src ${customScheme}://* 'unsafe-inline' data:`,
         ],
       },
     });

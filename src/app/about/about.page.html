@@ -5,7 +5,7 @@
     </ion-buttons>
     <ion-title>
       <ion-title>
-        <breadcrumb [title]="'Créditos'" [imagePath]="'./assets/img/question.png'"></breadcrumb>
+        <breadcrumb [title]="'Créditos'" [imagePath]="imagePath"></breadcrumb>
       </ion-title>
     </ion-title>
   </ion-toolbar>
@@ -17,7 +17,7 @@
       <ion-title size="large"></ion-title>
     </ion-toolbar>
   </ion-header>
-  <ion-content>
+  <ion-content #content>
     <div class="maincontent">
       <ion-grid fixed style="margin-top:60px">
         <ion-row>

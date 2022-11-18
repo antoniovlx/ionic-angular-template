@@ -1,6 +1,5 @@
 {
-  "appId": "AppIDEX",
-  "copyright" : "Copyright © year ${author}",
+  "appId": "com.yourdoamnin.yourapp",
   "directories": {
     "buildResources": "resources"
   },
@@ -8,8 +7,7 @@
     "assets/**/*",
     "build/**/*",
     "capacitor.config.*",
-    "app/**/*",
-    "src/assets/databases/**/*"
+    "app/**/*"
   ],
   "publish": {
     "provider": "github"
@@ -17,13 +15,14 @@
   "nsis": {
     "allowElevation": true,
     "oneClick": false,
-    "allowToChangeInstallationDirectory": true,
-    "artifactName": "${productFilename}-installer-${version}.${ext}"
+    "allowToChangeInstallationDirectory": true
   },
   "win": {
-    "target": [
-      "nsis"
-    ],
-    "icon": "assets/icon.ico"
+    "target": "nsis",
+    "icon": "assets/appIcon.ico"
+  },
+  "mac": {
+    "category": "your.app.category.type",
+    "target": "dmg"
   }
 }

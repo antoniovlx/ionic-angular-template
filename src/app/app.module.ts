@@ -5,7 +5,6 @@ import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { SQLiteService } from './services/sqlite.service';
-import { DetailService } from './services/detail.service';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { MultiTranslateHttpLoader } from 'ngx-translate-multi-http-loader';
@@ -35,7 +34,8 @@ export function HttpLoaderFactory(http: HttpClient) {
 @NgModule({
   declarations: [AppComponent],
   entryComponents: [],
-  imports: [BrowserModule, IonicModule.forRoot({ animated: false }), AppRoutingModule, HttpClientModule, TranslateModule.forRoot({
+  imports: [BrowserModule, IonicModule.forRoot({ animated: false }), 
+    AppRoutingModule, HttpClientModule, TranslateModule.forRoot({
     //missingTranslationHandler: { provide: MissingTranslationHandler, useClass: MyMissingTranslationHandler },
     useDefaultLang: false,
     loader: {
@@ -44,7 +44,7 @@ export function HttpLoaderFactory(http: HttpClient) {
       deps: [HttpClient]
   }
   })],
-  providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy }, SQLiteService, DetailService, FileOpener],
+  providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy }, SQLiteService, FileOpener],
   bootstrap: [AppComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })

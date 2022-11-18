@@ -1,32 +1,21 @@
 import type { CapacitorElectronConfig } from '@capacitor-community/electron';
 import { getCapacitorElectronConfig, setupElectronDeepLinking } from '@capacitor-community/electron';
 import type { MenuItemConstructorOptions } from 'electron';
-import { app, MenuItem, ipcMain } from 'electron';
+import { app, MenuItem } from 'electron';
 import electronIsDev from 'electron-is-dev';
 import unhandled from 'electron-unhandled';
 import { autoUpdater } from 'electron-updater';
-import { ElectronCapacitorApp, setupContentSecurityPolicy, setupReloadWatcher, } from './setup';
+
+import { ElectronCapacitorApp, setupContentSecurityPolicy, setupReloadWatcher } from './setup';
 
 // Graceful handling of unhandled errors.
 unhandled();
 
-/*
- const icon = nativeImage.createFromPath(
-  join(app.getAppPath(), 'assets', process.platform === 'win32' ? 'appIcon.ico' : 'appIcon.png'));
-*/
-
 // Define our menu templates (these are optional)
 const trayMenuTemplate: (MenuItemConstructorOptions | MenuItem)[] = [new MenuItem({ label: 'Quit App', role: 'quit' })];
 const appMenuBarMenuTemplate: (MenuItemConstructorOptions | MenuItem)[] = [
-  /*{ role: process.platform === 'darwin' ? 'appMenu' : 'fileMenu' },
-{ role: 'viewMenu' }*/
-  /*{
-    label: 'Zoom',
-    submenu: [
-      { label: 'Zoom+', role: 'zoomIn' , icon: __dirname + '\\icons\\zoom-in.png' },
-      { label: 'Zoom-', role: 'zoomOut', icon: __dirname + '\\icons\\zoom-out.png' },
-    ]
-  }*/
+  { role: process.platform === 'darwin' ? 'appMenu' : 'fileMenu' },
+  { role: 'viewMenu' },
 ];
 
 // Get Config options from capacitor.config
@@ -52,13 +41,12 @@ if (electronIsDev) {
 (async () => {
   // Wait for electron app to be ready.
   await app.whenReady();
-
   // Security - Set Content-Security-Policy based on whether or not we are in dev mode.
   setupContentSecurityPolicy(myCapacitorApp.getCustomURLScheme());
   // Initialize our app, build windows, and load content.
   await myCapacitorApp.init();
   // Check for updates if we are in a packaged app.
-  //autoUpdater.checkForUpdatesAndNotify();
+  autoUpdater.checkForUpdatesAndNotify();
 })();
 
 // Handle when all of our windows are close (platforms have their own expectations).
@@ -79,14 +67,4 @@ app.on('activate', async function () {
   }
 });
 
-
 // Place all ipc or other electron api calls and custom functionality under this line
-
-ipcMain.on('test', (event, data) => {
-  try {
-    console.log(data);
-    event.returnValue = 'pong'
-  } catch (err) {
-    throw err;
-  }
-})

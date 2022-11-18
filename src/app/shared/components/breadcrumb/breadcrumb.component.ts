@@ -12,18 +12,10 @@ export class IBreadCrumb {
 	templateUrl: './breadcrumb.component.html',
 	styleUrls: ['./breadcrumb.component.scss']
 })
-export class BreadcrumbComponent implements OnInit {
+export class BreadcrumbComponent{
 	@Input() 
 	imagePath: string;
 
 	@Input() 
 	title: string;
-
-	constructor() {
-		
-	}
-
-	ngOnInit() {
-		
-	}
 }

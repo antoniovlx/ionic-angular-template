@@ -69,10 +69,6 @@ export class AppComponent implements OnInit, AfterViewInit {
     });
   }
 
-  openHelp() {
-
-  }
-
   get appPages() {
     return appPages;
   }
@@ -86,6 +82,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     }
     event.returnValue = false;*/
   }
+
   @HostListener('document:keydown.control.+', ['$event'])
   handleZoomInKeyboardEvent(event: KeyboardEvent) {
     if (this.isElectron()) {
@@ -142,8 +139,6 @@ export class AppComponent implements OnInit, AfterViewInit {
   getYPosition(e: Event): number {
     return (e.target as Element).scrollTop;
   }
-
-
 
   changeLang(lang: string) {
     this.translate.use(lang);

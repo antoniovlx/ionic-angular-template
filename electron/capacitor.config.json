@@ -1,6 +1,6 @@
 {
-  "appId": "io.labif.appidex",
-  "appName": "appidex",
+  "appId": "io.labif.app",
+  "appName": "ionic-angular-template",
   "webDir": "www",
   "bundledWebRuntime": "false",
   "electron":{
