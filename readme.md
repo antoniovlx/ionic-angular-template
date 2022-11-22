@@ -58,24 +58,13 @@ Content-Security-Policy
 - Add code in setup.ts inside init()
 
 
-    import { ipcMain } from  'electron';
-
-    ipcMain.on('openInspectDeveloper', (event, data) => {
-    	this.MainWindow.webContents.openDevTools();
-    	event.returnValue = true;
-    });
-
-    ipcMain.on('zoomChanged', (event, zoom) => {
-    var  currentZoom = this.MainWindow.webContents.getZoomFactor();
-    if (zoom === "in") {
-    	this.MainWindow.webContents.zoomFactor = currentZoom + 0.1;
-    }
+       import { ipcMain } from 'electron';
     
-    if (zoom === "out") {
-    	this.MainWindow.webContents.zoomFactor = currentZoom - 0.1;
-    }
-    event.returnValue = true;
-    });
+    ipcMain.on('openInspectDeveloper', (event, data) => { this.MainWindow.webContents.openDevTools(); event.returnValue = true; });
+    
+    ipcMain.on('zoomChanged', (event, zoom) => { var currentZoom = this.MainWindow.webContents.getZoomFactor(); if (zoom === "in") { this.MainWindow.webContents.zoomFactor = currentZoom + 0.1; }
+    
+    if (zoom === "out") { this.MainWindow.webContents.zoomFactor = currentZoom - 0.1; } event.returnValue = true; });
 
 - update  `electron/preload.ts`
 
