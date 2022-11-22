@@ -58,7 +58,7 @@ Content-Security-Policy
 - Add code in setup.ts inside init()
 
 
-    `import { ipcMain } from  'electron';
+    import { ipcMain } from  'electron';
 
     ipcMain.on('openInspectDeveloper', (event, data) => {
     	this.MainWindow.webContents.openDevTools();
@@ -75,7 +75,7 @@ Content-Security-Policy
     	this.MainWindow.webContents.zoomFactor = currentZoom - 0.1;
     }
     event.returnValue = true;
-    });`
+    });
 
 - update  `electron/preload.ts`
 
