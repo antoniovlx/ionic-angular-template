@@ -264,6 +264,10 @@ ion-select::part(icon) {
   }
 }
 
+.item.sc-ion-label-md-h, .item .sc-ion-label-md-h{
+  overflow: visible !important;
+}
+
 .tab {
   margin: 0 auto;
   max-width: 100%;
@@ -279,7 +283,7 @@ ion-select::part(icon) {
 }
 
 .mat-row:hover {
-  background-color: var(--ion-color-primary);
+  background-color: var(--ion-color-secondary);
 }
 
 h4 {
@@ -403,7 +407,7 @@ td.mat-cell {
 th.mat-header-cell {
   font-size: 13px !important;
   font-weight: 500;
-  background-color: #c3c37c;
+  background-color: var(--ion-color-primary)
 }
 
 thead tr th {
@@ -537,7 +541,7 @@ ion-slides {
 }
 
 ion-item {
-  --border-color: #fff;
+  --border-color: #fff0;
   --inner-padding-bottom: 3px;
   --background: rgba(255, 255, 255, 0);
   margin-bottom: 3px;

@@ -68,7 +68,7 @@ Content-Security-Policy
 
 - update  `electron/preload.ts`
 
-        require('./rt/electron-rt'); 
+        `require('./rt/electron-rt'); 
         //////////////////////////////
       
         // User Defined Preload scripts below
@@ -84,7 +84,7 @@ Content-Security-Policy
         /////////////////////////
         contextBridge.exposeInMainWorld('electron', {
     	    ipc: { ...ipcRenderer }
-        })
+        })`
 
   
 
@@ -108,3 +108,13 @@ Content-Security-Policy
 `<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" /><uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />`
 
 - `Error: Android  Gradle  plugin  requires  Java  11  to  run. You  are  currently  using  Java  1.8`: change  IDE  settings  JVM used by gradle
+
+- `Error: "package android.support.* does not exist"​`
+
+This error occurs when some Cordova or Capacitor plugin has old android support dependencies instead of using the new AndroidX equivalent. You should report the issue in the plugin repository so the maintainers can update the plugin to use AndroidX dependencies.
+
+As a workaround, you can also patch the plugin using jetifier:
+
+`npm install jetifier
+npx jetify
+npx cap sync android`
